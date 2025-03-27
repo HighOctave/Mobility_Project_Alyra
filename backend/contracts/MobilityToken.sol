@@ -9,15 +9,47 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 /// @custom:security-contact d.sanou@gmail.com
 contract MobilityToken is ERC20, ERC20Burnable, Ownable, ERC20Permit {
+    event Redeemed(address indexed user, uint256 amount);
+    event TokensBurned(address indexed burner, uint256 amount);
+
     constructor()
         ERC20("MobilityToken", "MTK")
         Ownable(msg.sender)
         ERC20Permit("MobilityToken")
     {
+        // Mint initial supply to owner and contract
         _mint(msg.sender, 10000000 * 10 ** decimals());
+        _mint(address(this), 5000000 * 10 ** decimals()); // Réserve initiale pour le redeem
     }
 
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
+    }
+
+    // Fonction redeem transfère depuis le contrat vers l'utilisateur
+    function redeem(uint256 amount) external {
+        require(
+            balanceOf(address(this)) >= amount, 
+            "MobilityToken: Insufficient contract balance"
+        );
+        
+        _transfer(address(this), msg.sender, amount);
+        emit Redeemed(msg.sender, amount);
+    }
+
+    // Fonction pour brûler ses propres jetons avec retour de statut
+    function sendAndBurn(uint256 amount) external returns (bool) {
+        if (amount == 0 || balanceOf(msg.sender) < amount) {
+            return false;
+        }
+        
+        _burn(msg.sender, amount);
+        emit TokensBurned(msg.sender, amount);
+        return true;
+    }
+
+    // Fonction optionnelle pour alimenter le contrat en jetons
+    function fundContract(uint256 amount) external onlyOwner {
+        _transfer(owner(), address(this), amount);
     }
 }
