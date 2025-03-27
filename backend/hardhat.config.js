@@ -19,7 +19,7 @@ const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
 
 module.exports = {
   // Spécifie le réseau par défaut pour Hardhat, qui est défini sur "hardhat".
-  defaultNetwork: "localhost",
+  defaultNetwork: "hardhat",
   // Définit les configurations pour différents réseaux. Dans cet exemple, 
   // il y a un réseau "sepolia" (chaine de blocs fictive) et un réseau "localhost"
   // pour le développement en local.
@@ -28,18 +28,17 @@ module.exports = {
       url: SEPOLIA_RPC_URL,
       accounts: [`0x${PRIVATE_KEY}`],
       chainId: 11155111,
-      //blockConfirmations: 6,
-      //gasMultiplier: 4,
+      blockConfirmations: 6,
     },
     localhost: {
-      url: "http://127.0.0.1:8545",
+      url: "<http://127.0.0.1:8545>",
       chainId: 31337,
     },
   },
   // Active le rapporteur de gaz (gas reporter) pour afficher les coûts de gaz 
   // lors des déploiements et des transactions.
   gasReporter: {
-    enabled: false,
+    enabled: true,
   }, 
   // /!\  Permet de configurer la vérifications sur Etherscan
   etherscan: {
@@ -47,7 +46,7 @@ module.exports = {
   },
    // /!\ 
   // Configure les compilateurs Solidity utilisés par Hardhat. 
-  // Dans cet exemple, la version "0.8.28" est spécifiée.
+  // Dans cet exemple, la version "0.8.19" est spécifiée.
   solidity: {
     compilers: [
       {
