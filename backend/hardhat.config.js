@@ -14,7 +14,6 @@ fournissant ainsi des valeurs pour les URL des nœuds de blockchain, la clé pri
 la clé API d'Etherscan (si elles sont définies). Les || "" assurent que les valeurs sont initialisées 
 avec des chaînes vides par défaut si elles ne sont pas fournies dans le fichier .env. */
 const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || "";
-const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL || "";
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
 
