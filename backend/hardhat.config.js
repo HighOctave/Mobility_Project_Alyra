@@ -26,7 +26,7 @@ module.exports = {
   networks: {
     sepolia: {
       url: SEPOLIA_RPC_URL,
-      accounts: [`0x${PRIVATE_KEY}`],
+      account: [`0x${PRIVATE_KEY}`],
       chainId: 11155111,
       blockConfirmations: 6,
     },
