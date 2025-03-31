@@ -9,7 +9,7 @@ describe("MobilityToken", function () {
     [owner, user1, user2] = await ethers.getSigners();
     const MobilityToken = await ethers.getContractFactory("MobilityToken");
     contract = await MobilityToken.deploy();
-    await contract.waitForDeployment();
+    //await contract.waitForDeployment();
   });
 
   describe("Initialization", function () {
