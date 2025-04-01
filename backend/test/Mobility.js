@@ -173,4 +173,85 @@ describe("MobilityToken", function () {
       expect(await contract.totalSupply()).to.equal(expectedSupply);
     });
   });
+
+  describe("ETH Handling", function () {
+    describe("receive() external payable", function () {
+      it("Should emit LogDepot when receiving ETH", async function () {
+        const amount = ethers.parseEther("1.0");
+        
+        await expect(
+          owner.sendTransaction({
+            to: contract.target,
+            value: amount
+          })
+        ).to.emit(contract, "LogDepot")
+         .withArgs(owner.address, amount);
+      });
+  
+      it("Should increase contract ETH balance", async function () {
+        const initialBalance = await ethers.provider.getBalance(contract.target);
+        const amount = ethers.parseEther("0.5");
+        
+        await owner.sendTransaction({
+          to: contract.target,
+          value: amount
+        });
+  
+        expect(await ethers.provider.getBalance(contract.target)).to.equal(
+          initialBalance + amount
+        );
+      });
+  
+      it("Should not affect token balances", async function () {
+        const initialTokenBalance = await contract.balanceOf(contract.target);
+        const amount = ethers.parseEther("1.0");
+        
+        await owner.sendTransaction({
+          to: contract.target,
+          value: amount
+        });
+  
+        expect(await contract.balanceOf(contract.target)).to.equal(initialTokenBalance);
+      });
+    });
+  
+    describe("fallback() external", function () {
+      it("Should emit LogBadCall for invalid calls", async function () {
+        const fakeData = "0x12345678";
+        
+        await expect(
+          owner.sendTransaction({
+            to: contract.target,
+            data: fakeData
+          })
+        ).to.emit(contract, "LogBadCall")
+         .withArgs(owner.address);
+      });
+  
+      it("Should revert when sending ETH with data", async function () {
+        const fakeData = "0x12345678";
+        const amount = ethers.parseEther("1.0");
+        
+        await expect(
+          owner.sendTransaction({
+            to: contract.target,
+            data: fakeData,
+            value: amount
+          })
+        ).to.be.reverted;
+      });
+  
+      it("Should not change ETH balance on fallback without ETH", async function () {
+        const initialBalance = await ethers.provider.getBalance(contract.target);
+        const fakeData = "0xdeadbeef";
+        
+        await owner.sendTransaction({
+          to: contract.target,
+          data: fakeData
+        });
+  
+        expect(await ethers.provider.getBalance(contract.target)).to.equal(initialBalance);
+      });
+    });
+  });
 });

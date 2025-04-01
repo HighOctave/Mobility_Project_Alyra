@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { parseEther } from 'viem';
 import {
   useAccount,
   useReadContract,
@@ -13,57 +14,37 @@ import "../../styles/main.css";
 const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 
 const Booking = () => {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected } = useAccount(); // Récupère l'adresse de l'utilisateur connecté
+  const { writeContract } = useWriteContract(); // Hook pour écrire sur le contrat
+  const milesArray = [70, 90, 110, 130]; // Tableau prédéfini des valeurs récupérées depuis BDD AirFrance
 
-  //EFFECTS
-  // useEffect(() => {
-  //   if (address) {
-  //     isConnected = true;
-  //   }
-  // }, [
-  //   address,
-  // ]);
+  const handleRedeem = (miles) => {
 
-  //EVENTS
-  useWatchContractEvent({
-    address: contractAddress,
-    abi: ContractAbi.abi,
-    eventName: "Redeemed",
-    onLogs(logs) {
-      console.log("Redeemed!", logs);
-    },
-  });
+    const amountInWei = parseEther(miles.toString()); // Converti MTK en wei (18 décimales)
 
-  // WRITE CONTRACT
-  const { writeContract } = useWriteContract();
-
-  const redeem = (amount) => {
     writeContract({
       address: contractAddress,
       abi: ContractAbi.abi,
-      functionName: "redeem",
-      args: [amount],
+      functionName: 'redeem',
+      args: [amountInWei],
     });
   };
 
-  //DISPLAY
   return (
-  <div className="container">
+    <div className="container">
     {isConnected && (
         <>
-          <p>You are connected</p>
-          {
-              <button onClick={() => redeem(10)} >Claim</button>
-          }
-          
-          {/* {isConnected && (
-            <button onClick={redeem(10)}>
-              Claim
-            </button>
-          )} */}
+          {milesArray.map((miles, index) => (
+            <div key={index}>
+              <button onClick={() => handleRedeem(miles)} disabled={!address} style={{ margin: '5px' }}>
+                Redeem {miles} MTK
+              </button>
+            </div>
+          ))}
         </>
       )}
-  </div>);
-};
+  </div>
+  );
+}
 
 export default Booking;

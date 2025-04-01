@@ -6,16 +6,15 @@
 ```shell
 npx hardhat compile
 npx hardhat node
-npx hardhat run scripts/deploy.js --network localhost
+
 npx hardhat ignition deploy ignition/modules/MobilityToken.js --network localhost
 npx hardhat ignition deploy ignition/modules/MobilityToken.js --network sepolia
 
-npx hardhat test
-npx hardhat coverage
-
-npx hardhat verify 0x2469446aF18Fb6927dBE775f67385839d5c1c7F0 --network sepolia
 npx hardhat verify 0x2469446aF18Fb6927dBE775f67385839d5c1c7F0 0x653e0E9F309C87839a06C228A70D63522bf93A1F --network sepolia
 https://sepolia.etherscan.io/address/0x2469446aF18Fb6927dBE775f67385839d5c1c7F0#code
+
+npx hardhat test
+npx hardhat coverage
 
 ```
 > [!NOTE]
@@ -44,7 +43,17 @@ https://sepolia.etherscan.io/address/0x2469446aF18Fb6927dBE775f67385839d5c1c7F0#
       
     6. Edge cases  
       ✔ Should handle max uint256 values 
-      ✔ Should handle multiple consecutive operations  
+      ✔ Should handle multiple consecutive operations
+    
+    7. ETH Handling
+      receive() external payable
+        ✔ Should emit LogDepot when receiving ETH
+        ✔ Should increase contract ETH balance
+        ✔ Should not affect token balances
+      fallback() external
+        ✔ Should emit LogBadCall for invalid calls
+        ✔ Should revert when sending ETH with data
+        ✔ Should not change ETH balance on fallback without ETH
 
 # Test Coverage
 

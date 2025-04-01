@@ -9,8 +9,11 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 /// @custom:security-contact d.sanou@gmail.com
 contract MobilityToken is ERC20, ERC20Burnable, Ownable, ERC20Permit {
+
     event Redeemed(address indexed user, uint256 amount);
     event TokensBurned(address indexed burner, uint256 amount);
+    event LogBadCall(address user);
+	event LogDepot(address user, uint quantity);
 
     constructor(address owner)
         ERC20("MobilityToken", "MTK")
@@ -27,7 +30,7 @@ contract MobilityToken is ERC20, ERC20Burnable, Ownable, ERC20Permit {
     }
 
     // Fonction redeem transfère depuis le contrat vers l'utilisateur
-    function redeem(uint256 amount) external {
+    function redeem(uint256 amount) external payable {
         require(
             balanceOf(address(this)) >= amount, 
             "MobilityToken: Insufficient contract balance"
@@ -52,4 +55,8 @@ contract MobilityToken is ERC20, ERC20Burnable, Ownable, ERC20Permit {
     function fundContract(uint256 amount) external onlyOwner {
         _transfer(owner(), address(this), amount);
     }
+
+    fallback() external { emit LogBadCall(msg.sender);}
+	
+	receive() external payable { emit LogDepot(msg.sender, msg.value);}
 }
