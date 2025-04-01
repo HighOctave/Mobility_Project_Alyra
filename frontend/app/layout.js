@@ -2,6 +2,8 @@ import RainbowKitAndWagmiProvider from "./RainbowKitAndWagmiProvider";
 import Layout from "@/components/shared/Layout";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+// 1. import `HeroUIProvider` component
+import {HeroUIProvider} from "@heroui/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,17 +16,19 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Voting App TP3",
-  description: "Voting application for Alyra TP3",
+  title: "Mobility App TP4",
+  description: "Mobility application for Alyra TP4",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} >
+      <HeroUIProvider>
         <RainbowKitAndWagmiProvider>
           <Layout>{children}</Layout>
         </RainbowKitAndWagmiProvider>
+      </HeroUIProvider>
       </body>
     </html>
   );

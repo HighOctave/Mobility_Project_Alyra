@@ -1,7 +1,16 @@
 "use client";
 
+import {Button} from "@heroui/button";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableColumn,
+  TableRow,
+  TableCell,
+} from "@heroui/table";
 import React, { useState, useEffect } from "react";
-import { parseEther } from 'viem';
+import { parseEther } from "viem";
 import {
   useAccount,
   useReadContract,
@@ -9,42 +18,81 @@ import {
   useWatchContractEvent,
 } from "wagmi";
 import ContractAbi from "../../contracts/MobilityToken.json";
+import styles from "../../styles/Home.module.css";
 import "../../styles/main.css";
+import "../../styles/airfrance.css";
+import voyages from "../../data/voyages.json"; // Liste prédéfinie de données récupérées depuis BDD AirFrance
 
 const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 
 const Booking = () => {
   const { address, isConnected } = useAccount(); // Récupère l'adresse de l'utilisateur connecté
   const { writeContract } = useWriteContract(); // Hook pour écrire sur le contrat
-  const milesArray = [70, 90, 110, 130]; // Tableau prédéfini des valeurs récupérées depuis BDD AirFrance
 
   const handleRedeem = (miles) => {
-
     const amountInWei = parseEther(miles.toString()); // Converti MTK en wei (18 décimales)
 
     writeContract({
       address: contractAddress,
       abi: ContractAbi.abi,
-      functionName: 'redeem',
+      functionName: "redeem",
       args: [amountInWei],
     });
   };
 
+  function ClaimButton({ miles, isClaimed }) {
+    if (isClaimed) {
+      return (
+        <Button isDisabled color="warning">
+          Already Claimed
+        </Button>
+      );
+    }
+    return (
+      <Button onPress={() => handleRedeem(miles)}> Claim {miles} MTK </Button>
+    );
+  }
+
   return (
     <div className="container">
-    {isConnected && (
+      {isConnected && (
         <>
-          {milesArray.map((miles, index) => (
-            <div key={index}>
-              <button onClick={() => handleRedeem(miles)} disabled={!address} style={{ margin: '5px' }}>
-                Redeem {miles} MTK
-              </button>
-            </div>
-          ))}
+        <h1 className={styles.title}>
+          Welcome to the AirFrance DApp
+        </h1>
+          {voyages.map((voyage, index) => {
+            return (
+              <Table key={index} aria-label="Example static collection table">
+                <TableHeader>
+                  <TableColumn>Trip</TableColumn>
+                  <TableColumn>Departing</TableColumn>
+                  <TableColumn>Return</TableColumn>
+                  <TableColumn>Booking reference</TableColumn>
+                  <TableColumn></TableColumn>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>
+                      {voyage.from} to {voyage.to}
+                    </TableCell>
+                    <TableCell>{voyage.departing}</TableCell>
+                    <TableCell>{voyage.return}</TableCell>
+                    <TableCell>{voyage.reference}</TableCell>
+                    <TableCell>
+                      <ClaimButton
+                        isClaimed={voyage.hasBeenClaimed}
+                        miles={voyage.miles}
+                      />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            );
+          })}
         </>
       )}
-  </div>
+    </div>
   );
-}
+};
 
 export default Booking;
