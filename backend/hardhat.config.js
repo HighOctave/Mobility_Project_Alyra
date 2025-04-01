@@ -14,7 +14,7 @@ fournissant ainsi des valeurs pour les URL des nœuds de blockchain, la clé pri
 la clé API d'Etherscan (si elles sont définies). Les || "" assurent que les valeurs sont initialisées 
 avec des chaînes vides par défaut si elles ne sont pas fournies dans le fichier .env. */
 const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || "";
-const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
+const PRIVATE_KEY = process.env.PRIVATE_KEY || "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
 
 module.exports = {
@@ -26,9 +26,10 @@ module.exports = {
   networks: {
     sepolia: {
       url: SEPOLIA_RPC_URL,
-      account: [`0x${PRIVATE_KEY}`],
+      accounts: [`0x${PRIVATE_KEY}`],
       chainId: 11155111,
       blockConfirmations: 6,
+      gasPrice: 8000000000,
     },
     localhost: {
       url: "http://127.0.0.1:8545",

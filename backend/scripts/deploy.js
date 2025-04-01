@@ -1,12 +1,12 @@
 const { ethers } = require("hardhat");
 
 async function main() {
-  const Voting = await ethers.getContractFactory("MobilityToken");
-  const voting = await Voting.deploy();
+  const MobilityToken = await ethers.getContractFactory("MobilityToken");
+  const contract = await MobilityToken.deploy();
   
-  await voting.waitForDeployment();
+  await contract.waitForDeployment();
   
-  console.log("Contract deployed to address:", voting.target);
+  console.log("Contract deployed to address:", contract.target);
 }
 
 main()

@@ -12,13 +12,13 @@ contract MobilityToken is ERC20, ERC20Burnable, Ownable, ERC20Permit {
     event Redeemed(address indexed user, uint256 amount);
     event TokensBurned(address indexed burner, uint256 amount);
 
-    constructor()
+    constructor(address owner)
         ERC20("MobilityToken", "MTK")
-        Ownable(msg.sender)
+        Ownable(owner)
         ERC20Permit("MobilityToken")
     {
         // Mint initial supply to owner and contract
-        _mint(msg.sender, 10000000 * 10 ** decimals());
+        _mint(owner, 10000000 * 10 ** decimals());
         _mint(address(this), 5000000 * 10 ** decimals()); // Réserve initiale pour le redeem
     }
 

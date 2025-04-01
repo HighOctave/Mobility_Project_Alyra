@@ -7,14 +7,15 @@
 npx hardhat compile
 npx hardhat node
 npx hardhat run scripts/deploy.js --network localhost
-npx hardhat run scripts/deploy.js --network sepolia
+npx hardhat ignition deploy ignition/modules/MobilityToken.js --network localhost
+npx hardhat ignition deploy ignition/modules/MobilityToken.js --network sepolia
 
 npx hardhat test
 npx hardhat coverage
 
-npx hardhat verify 0x1A71969E3feE5BB695c216be56bdAB29f39d192D --network sepolia
-npx hardhat verify 0x1A71969E3feE5BB695c216be56bdAB29f39d192D param1 param2 paramX --network sepolia
-https://sepolia.etherscan.io/address/0x1A71969E3feE5BB695c216be56bdAB29f39d192D#code
+npx hardhat verify 0x2469446aF18Fb6927dBE775f67385839d5c1c7F0 --network sepolia
+npx hardhat verify 0x2469446aF18Fb6927dBE775f67385839d5c1c7F0 0x653e0E9F309C87839a06C228A70D63522bf93A1F --network sepolia
+https://sepolia.etherscan.io/address/0x2469446aF18Fb6927dBE775f67385839d5c1c7F0#code
 
 ```
 > [!NOTE]
