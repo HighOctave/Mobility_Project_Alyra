@@ -50,7 +50,7 @@ const Booking = () => {
       {isConnected && (
         <>
         <h1 className={styles.title}>
-          Welcome to the AirFrance DApp
+          Welcome to the AirFrance DApp using rainbowkit
         </h1>
           {voyages.map((voyage, index) => {
             return (
