@@ -17,13 +17,19 @@ import {
   useWriteContract,
   useWatchContractEvent,
 } from "wagmi";
+//Constants
+import { contractAddress } from "@/constants";
+//Contract
 import ContractAbi from "../../contracts/MobilityToken.json";
+//Data
+import voyages from "../../data/voyages.json"; // Liste prédéfinie de données récupérées depuis BDD AirFrance
+//Styles
 import styles from "../../styles/Home.module.css";
 import "../../styles/main.css";
 import "../../styles/airfrance.css";
-import voyages from "../../data/voyages.json"; // Liste prédéfinie de données récupérées depuis BDD AirFrance
 
-const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
+
+//const contractAddress = contract.contractAddress;
 
 const Booking = () => {
   const { address, isConnected } = useAccount(); // Récupère l'adresse de l'utilisateur connecté
