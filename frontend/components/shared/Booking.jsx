@@ -1,22 +1,11 @@
 "use client";
 
+//Frameworks
 import {Button} from "@heroui/button";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableColumn,
-  TableRow,
-  TableCell,
-} from "@heroui/table";
+import {Table, TableHeader, TableBody, TableColumn, TableRow, TableCell,} from "@heroui/table";
 import React, { useState, useEffect } from "react";
 import { parseEther } from "viem";
-import {
-  useAccount,
-  useReadContract,
-  useWriteContract,
-  useWatchContractEvent,
-} from "wagmi";
+import { useAccount, useReadContract, useWriteContract, useWatchContractEvent,} from "wagmi";
 //Constants
 import { contractAddress } from "@/constants";
 //Contract
@@ -28,12 +17,9 @@ import styles from "../../styles/Home.module.css";
 import "../../styles/main.css";
 import "../../styles/airfrance.css";
 
-
-//const contractAddress = contract.contractAddress;
-
 const Booking = () => {
-  const { address, isConnected } = useAccount(); // Récupère l'adresse de l'utilisateur connecté
-  const { writeContract } = useWriteContract(); // Hook pour écrire sur le contrat
+  const { address, isConnected } = useAccount();
+  const { writeContract } = useWriteContract();
 
   const handleRedeem = (miles) => {
     const amountInWei = parseEther(miles.toString()); // Converti MTK en wei (18 décimales)
