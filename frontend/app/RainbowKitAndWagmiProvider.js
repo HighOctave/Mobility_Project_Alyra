@@ -10,7 +10,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 const config = getDefaultConfig(
   {
     appName: 'Mobility DApp',
-    projectId: 'prj_3oqf8ePTocP4kGq9AETWa4S4ldmQ',
+    projectId: 'prj_poMvVkouz21EPLwjEzEHb0LKjoho',
     chains: [hardhat, sepolia],
     ssr: true,
 });
