@@ -22,7 +22,7 @@ const Booking = () => {
   const { writeContract } = useWriteContract();
 
   const handleRedeem = (miles) => {
-    const amountInWei = parseEther(miles.toString()); // Converti MTK en wei (18 décimales)
+    const amountInWei = parseEther(miles.toString()); // MTK en wei (18 décimales)
 
     writeContract({
       address: contractAddress,
