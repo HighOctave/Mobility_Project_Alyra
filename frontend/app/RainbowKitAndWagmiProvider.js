@@ -6,6 +6,7 @@ import { WagmiProvider } from 'wagmi';
 import { hardhat } from 'wagmi/chains';
 import { sepolia } from '@/utils/sepolia';
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { HeroUIProvider } from '@heroui/react';
 
 const config = getDefaultConfig(
   {
@@ -22,7 +23,7 @@ const RainbowKitAndWagmiProvider = ({ children }) => {
     <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
             <RainbowKitProvider>
-                {children}
+              <HeroUIProvider>{children}</HeroUIProvider>
             </RainbowKitProvider>
         </QueryClientProvider>
     </WagmiProvider>
