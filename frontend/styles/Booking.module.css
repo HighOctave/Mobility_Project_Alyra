@@ -33,3 +33,13 @@
     font-weight: 600;
   }
 
+.balance{
+  border-bottom: 4px solid #d40504;
+  font-weight: 600;
+  font-size: 1.125rem;
+  /*background: #f1f1f1;*/
+}
+
+.token{
+  color: #03821e;
+}

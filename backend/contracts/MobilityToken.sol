@@ -10,6 +10,8 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 /// @custom:security-contact d.sanou@gmail.com
 contract MobilityToken is ERC20, ERC20Burnable, Ownable, ERC20Permit {
 
+    mapping(address => mapping(string => bool)) public hasBeenClaimed;
+
     event Redeemed(address indexed user, uint256 amount);
     event TokensBurned(address indexed burner, uint256 amount);
     event LogBadCall(address user);
@@ -29,13 +31,22 @@ contract MobilityToken is ERC20, ERC20Burnable, Ownable, ERC20Permit {
         _mint(to, amount);
     }
 
+    // Vérifie si une référence a été réclamée par une adresse
+    function beenClaimed(address user, string memory boardingref) public view returns (bool) {
+        require(bytes(boardingref).length == 6, "Reference must have six characters");
+        return hasBeenClaimed[user][boardingref];
+    }
+
     // Fonction redeem transfère depuis le contrat vers l'utilisateur
-    function redeem(uint256 amount) external payable {
+    function redeem(uint256 amount, string memory boardingref) external payable {
+        require(bytes(boardingref).length == 6, "Reference must have six characters");
+        require(!hasBeenClaimed[msg.sender][boardingref], "Token already claimed");
         require(
             balanceOf(address(this)) >= amount, 
             "MobilityToken: Insufficient contract balance"
         );
         
+        hasBeenClaimed[msg.sender][boardingref] = true;
         _transfer(address(this), msg.sender, amount);
         emit Redeemed(msg.sender, amount);
     }
@@ -49,6 +60,11 @@ contract MobilityToken is ERC20, ERC20Burnable, Ownable, ERC20Permit {
         _burn(msg.sender, amount);
         emit TokensBurned(msg.sender, amount);
         return true;
+    }
+
+    // Fonction pour vérifier le solde d'un utilisateur
+    function getBalance(address user) public view returns (uint256) {
+        return balanceOf(user);
     }
 
     // Fonction optionnelle pour alimenter le contrat en jetons
