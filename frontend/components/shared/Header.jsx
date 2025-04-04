@@ -6,7 +6,7 @@ const Header = () => {
   return (
     <header className="header">
       <div className="logo-container">
-        <Image src="/images/brand-logo.svg" alt="Airline Logo" width={300} height={0} />
+        <Image src="/images/brand-logo.svg" alt="Airline Logo" width={300} height={20} />
       </div>
       
       <nav className="nav-menu">
@@ -18,8 +18,8 @@ const Header = () => {
       </nav>
 
       <div className="auth-section">
-      <ConnectButton label="Connect your Wallet"/>
-      <Image src="/images/loggedIn.png" alt="DAVID SANOU" width={246} height={0} />
+      <ConnectButton label="Connect your Wallet" chainStatus="icon" showBalance={false}/>
+      <Image src="/images/loggedIn.png" alt="DAVID SANOU" width={246} height={20} />
       </div>
     </header>
   );

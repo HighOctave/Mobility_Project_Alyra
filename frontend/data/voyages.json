@@ -5,8 +5,7 @@
       "departing": "31 Déc.",
       "return": "03 Jan.",
       "reference": "WONBBQ",
-      "miles": 70,
-      "hasBeenClaimed": false
+      "miles": 70
     },
     {
       "from": "Londres",
@@ -14,8 +13,7 @@
       "departing": "15 Fév.",
       "return": "20 Fév.",
       "reference": "ABC123",
-      "miles": 90,
-      "hasBeenClaimed": true
+      "miles": 90
     },
     {
       "from": "Berlin",
@@ -23,7 +21,6 @@
       "departing": "10 Mars",
       "return": "15 Mars",
       "reference": "XYZ789",
-      "miles": 110,
-      "hasBeenClaimed": false
+      "miles": 110
     }
   ]
