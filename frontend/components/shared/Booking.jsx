@@ -1,7 +1,7 @@
 "use client";
 
 // Frameworks
-import {Button} from "@heroui/button";
+import {Button, ButtonGroup} from "@heroui/button";
 import React, { useState, useEffect } from "react";
 import { parseEther } from "viem";
 import {
