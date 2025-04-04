@@ -91,7 +91,7 @@ const Booking = () => {
   const handleRedeem = async (miles, reference) => {
     const amountInWei = parseEther(miles.toString());
     setLoadingReferences((prev) => ({ ...prev, [reference]: true }));
-    setErrorReferences((prev) => ({ ...prev, [reference]: false }));
+    setErrorReferences((prev) => ({ ...prev, [reference]: null }));
 
     try {
       const hash = await writeContract({
@@ -158,16 +158,16 @@ const Booking = () => {
       );
     }
 
-    if (error) {
-      return (
-        <div className={bookingstyles.errorContainer}>
-          <div className={bookingstyles.error}>{error}</div>
-          <Button onPress={() => handleRedeem(miles, reference)} className={bookingstyles.warningButton}>
-            Retry
-          </Button>
-        </div>
-      );
-    }
+    // if (error) {
+    //   return (
+    //     <div className={bookingstyles.errorContainer}>
+    //       <div className={bookingstyles.error}>{error}</div>
+    //       <Button onPress={() => handleRedeem(miles, reference)} className={bookingstyles.warningButton}>
+    //         Retry
+    //       </Button>
+    //     </div>
+    //   );
+    // }
 
     return (
       <Button onPress={() => handleRedeem(miles, reference)} className={bookingstyles.custumButton}>
