@@ -1,6 +1,7 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from 'next/link';
 import Image from 'next/image';
+import bookingstyles from "../../styles/Booking.module.css";
 
 const Header = () => {
   return (
@@ -12,7 +13,7 @@ const Header = () => {
       <nav className="nav-menu">
         <Link href="/">Book a flight</Link>
         <Link href="/">Check-in</Link>
-        <Link href="/">My Bookings</Link>
+        <Link href="/" className={bookingstyles.activeLink}>My Bookings</Link>
         <Link href="/">Information</Link>
         <Link href="/">Support</Link>
       </nav>

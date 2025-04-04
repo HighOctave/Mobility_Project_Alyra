@@ -156,3 +156,7 @@ font-size: 0.875rem;
   cursor:pointer;
 }
 
+.activeLink{
+  color: #d40504 !important;
+}
+
