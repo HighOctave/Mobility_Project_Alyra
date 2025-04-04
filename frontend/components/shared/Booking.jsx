@@ -9,6 +9,7 @@ import {
   useReadContract,
   useWriteContract,
   useWatchContractEvent,
+  usePublicClient,
 } from "wagmi";
 import { ethers } from "ethers";
 
@@ -28,7 +29,10 @@ import bookingstyles from "../../styles/Booking.module.css";
 const Booking = () => {
   const { address, isConnected } = useAccount();
   const { writeContract } = useWriteContract();
+  const publicClient = usePublicClient();
   const [claimedStatuses, setClaimedStatuses] = useState({});
+  const [loadingReferences, setLoadingReferences] = useState({});
+  const [errorReferences, setErrorReferences] = useState({});
 
   const { data: balance, refetch: refetchBalance } = useReadContract({
     address: contractAddress,
@@ -66,21 +70,71 @@ const Booking = () => {
     },
   });
 
-  const handleRedeem = (miles, reference) => {
+  const handleRedeem = async (miles, reference) => {
     const amountInWei = parseEther(miles.toString());
-    writeContract({
-      address: contractAddress,
-      abi: ContractAbi.abi,
-      functionName: "redeem",
-      args: [amountInWei, reference],
-    });
+    setLoadingReferences((prev) => ({ ...prev, [reference]: true }));
+    setErrorReferences((prev) => ({ ...prev, [reference]: null }));
+
+    try {
+      const hash = await writeContract({
+        address: contractAddress,
+        abi: ContractAbi.abi,
+        functionName: "redeem",
+        args: [amountInWei, reference],
+      });
+
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash,
+      });
+
+      if (receipt.status === 'success') {
+        setLoadingReferences((prev) => ({ ...prev, [reference]: false }));
+      } else {
+        setErrorReferences((prev) => ({
+          ...prev,
+          [reference]: 'Transaction failed',
+        }));
+        setLoadingReferences((prev) => ({ ...prev, [reference]: false }));
+      }
+    } catch (error) {
+      setErrorReferences((prev) => ({
+        ...prev,
+        [reference]: error.shortMessage || error.message,
+      }));
+      setLoadingReferences((prev) => ({ ...prev, [reference]: false }));
+    }
   };
 
   function ClaimButton({ miles, reference }) {
     const isClaimed = claimedStatuses[reference] || false;
-    return isClaimed ? (
-      <div className={bookingstyles.claimed}>Already Claimed</div>
-    ) : (
+    const isLoading = loadingReferences[reference] || false;
+    const error = errorReferences[reference];
+
+    if (isClaimed) {
+      return <div className={bookingstyles.claimed}>Already Claimed</div>;
+    }
+
+    if (isLoading) {
+      return (
+        <Button isDisabled>
+          <div className={bookingstyles.spinner} />
+          Processing...
+        </Button>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className={bookingstyles.errorContainer}>
+          <div className={bookingstyles.error}>{error}</div>
+          <Button onPress={() => handleRedeem(miles, reference)}>
+            Retry
+          </Button>
+        </div>
+      );
+    }
+
+    return (
       <Button onPress={() => handleRedeem(miles, reference)}>
         Claim {miles} MTK
       </Button>
