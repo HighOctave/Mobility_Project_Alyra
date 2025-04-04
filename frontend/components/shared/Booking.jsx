@@ -1,7 +1,7 @@
 "use client";
 
 // Frameworks
-import { Button } from "@heroui/react";
+import {Button} from "@heroui/button";
 import React, { useState, useEffect } from "react";
 import { parseEther } from "viem";
 import {
@@ -73,7 +73,7 @@ const Booking = () => {
   const handleRedeem = async (miles, reference) => {
     const amountInWei = parseEther(miles.toString());
     setLoadingReferences((prev) => ({ ...prev, [reference]: true }));
-    setErrorReferences((prev) => ({ ...prev, [reference]: null }));
+    setErrorReferences((prev) => ({ ...prev, [reference]: false }));
 
     try {
       const hash = await writeContract({
@@ -117,8 +117,7 @@ const Booking = () => {
     if (isLoading) {
       return (
         <Button isDisabled>
-          <div className={bookingstyles.spinner} />
-          Processing...
+          <div className={bookingstyles.spinner} /> Processing...
         </Button>
       );
     }
@@ -127,7 +126,7 @@ const Booking = () => {
       return (
         <div className={bookingstyles.errorContainer}>
           <div className={bookingstyles.error}>{error}</div>
-          <Button onPress={() => handleRedeem(miles, reference)}>
+          <Button onPress={() => handleRedeem(miles, reference)} className={bookingstyles.warningButton}>
             Retry
           </Button>
         </div>
@@ -135,7 +134,7 @@ const Booking = () => {
     }
 
     return (
-      <Button onPress={() => handleRedeem(miles, reference)}>
+      <Button onPress={() => handleRedeem(miles, reference)} className={bookingstyles.custumButton}>
         Claim {miles} MTK
       </Button>
     );

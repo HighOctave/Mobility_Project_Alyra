@@ -18,7 +18,7 @@ const Header = () => {
       </nav>
 
       <div className="auth-section">
-      <ConnectButton label="Connect your Wallet"/>
+      <ConnectButton label="Connect your Wallet" chainStatus="icon" showBalance={false}/>
       <Image src="/images/loggedIn.png" alt="DAVID SANOU" width={246} height={0} />
       </div>
     </header>
