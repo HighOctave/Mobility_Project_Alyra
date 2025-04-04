@@ -29,10 +29,12 @@ import bookingstyles from "../../styles/Booking.module.css";
 const Booking = () => {
   const { address, isConnected } = useAccount();
   const { writeContract } = useWriteContract();
+  const { writeContract: writeUpgrade } = useWriteContract();
   const publicClient = usePublicClient();
   const [claimedStatuses, setClaimedStatuses] = useState({});
   const [loadingReferences, setLoadingReferences] = useState({});
   const [errorReferences, setErrorReferences] = useState({});
+  const [upgradeSuccess, setUpgradeSuccess] = useState(false);
 
   const { data: balance, refetch: refetchBalance } = useReadContract({
     address: contractAddress,
@@ -60,6 +62,12 @@ const Booking = () => {
     setClaimedStatuses(statuses);
   }, [address, ...claimedStatusQueries.map((q) => q.data)]);
 
+  useEffect(() => {
+    if (balance) {
+      setUpgradeSuccess(false);
+    }
+  }, [balance]);
+
   useWatchContractEvent({
     address: contractAddress,
     abi: ContractAbi.abi,
@@ -67,6 +75,16 @@ const Booking = () => {
     onLogs: () => {
       refetchBalance();
       claimedStatusQueries.forEach((query) => query.refetch());
+    },
+  });
+
+  useWatchContractEvent({
+    address: contractAddress,
+    abi: ContractAbi.abi,
+    eventName: "TokensBurned",
+    onLogs: () => {
+      refetchBalance();
+      setUpgradeSuccess(true);
     },
   });
 
@@ -105,6 +123,24 @@ const Booking = () => {
     }
   };
 
+  const handleUpgrade = async () => {
+    try {
+      const result = await writeUpgrade({
+        address: contractAddress,
+        abi: ContractAbi.abi,
+        functionName: "sendAndBurn",
+        args: [parseEther("200")], // 200 MTK en wei
+      });
+
+      if (result) {
+        setUpgradeSuccess(true);
+        refetchBalance(); // Rafraîchir le solde
+      }
+    } catch (error) {
+      console.error("Upgrade failed:", error);
+    }
+  };
+
   function ClaimButton({ miles, reference }) {
     const isClaimed = claimedStatuses[reference] || false;
     const isLoading = loadingReferences[reference] || false;
@@ -140,6 +176,22 @@ const Booking = () => {
     );
   }
 
+  // Composant UpgradeButton
+  function UpgradeButton() {
+    const currentBalance = balance ? parseFloat(ethers.formatEther(balance)) : 0;
+    const isDisabled = currentBalance < 200 || upgradeSuccess;
+
+    return upgradeSuccess ? (
+      <div className={bookingstyles.successMessage}>
+        You have been upgraded with success to First Class.
+      </div>
+    ) : (
+      <Button onPress={handleUpgrade} disabled={isDisabled} className={`${bookingstyles.customButton} ${bookingstyles.upgradeButton}`}>
+      Upgrade to First Class (200 MTK)
+    </Button>
+    );
+  }
+
   return (
     <div>
       <main className={bookingstyles.container}>
@@ -154,7 +206,30 @@ const Booking = () => {
               </h2>
             </div>
             <h1 className={homestyles.title}>Your bookings</h1>
-            <div>You have no upcoming trips</div>
+            <table className={bookingstyles.bookingTable}>
+              <thead>
+                <tr>
+                  <th>Departure</th>
+                  <th>Arrival</th>
+                  <th>Departure Date</th>
+                  <th>Arrival Date</th>
+                  <th>Booking Reference</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Paris (CDG)</td>
+                  <td>New York (JFK)</td>
+                  <td>2024-03-15 08:30</td>
+                  <td>2024-03-15 11:00</td>
+                  <td>AF1234</td>
+                  <td>
+                    <UpgradeButton />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
             <h1 className={homestyles.title}>Previous trips</h1>
             <table className={bookingstyles.bookingTable}>
               <thead>

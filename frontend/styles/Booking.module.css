@@ -35,8 +35,9 @@
 }
 
 .claimed {
-  color:#e99133;
   font-weight: 600;
+  color: #64748b;
+  font-style: italic;
 }
 
 .balance{
@@ -94,6 +95,52 @@ font-size: 0.875rem;
 
 .custumButton:hover{
   cursor:pointer;
+  transform: translateY(-1px);
+}
+
+.customButton[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #e2e8f0;
+  color: #64748b;
+}
+
+.customButton[disabled]:hover {
+  transform: none;
+}
+
+.upgradeButton {
+  background-color: #d40504 !important;
+  width: 280px;
+  padding-top: 1%;
+  padding-bottom: 1%;
+  border-radius:10px;
+  color: #fff;
+}
+
+.upgradeButton:hover {
+  background-color: #b30403 !important;
+  transform: translateY(-1px);
+  cursor:pointer;
+}
+
+.upgradeButton[disabled] {
+  background-color: #f5f5f5 !important;
+  opacity: 0.7;
+  color: #3b4464;
+}
+
+.successMessage {
+  color: #16a34a;
+  font-weight: 500;
+  padding: 8px;
+  background-color: #dcfce7;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  width: 260px;
+  display: flex;
+  font-weight: 600;
+  text-align: center;
 }
 
 .warningButton {
@@ -108,3 +155,4 @@ font-size: 0.875rem;
 .warningButton:hover{
   cursor:pointer;
 }
+
