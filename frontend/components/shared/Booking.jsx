@@ -1,7 +1,7 @@
 "use client";
 
 // Frameworks
-import { Button, ButtonGroup } from "@heroui/react";
+import { Button } from "@heroui/react";
 import React, { useState, useEffect } from "react";
 import { parseEther } from "viem";
 import {
@@ -11,59 +11,25 @@ import {
   useWatchContractEvent,
 } from "wagmi";
 import { ethers } from "ethers";
+
 // Constants
 import { contractAddress } from "@/constants";
+
 // Contract
 import ContractAbi from "../../contracts/MobilityToken.json";
+
 // Data
 import voyages from "../../data/voyages.json"; // Liste prédéfinie de données récupérées depuis BDD AirFrance
+
 // Styles
 import homestyles from "../../styles/Home.module.css";
 import bookingstyles from "../../styles/Booking.module.css";
 
-// Hook personnalisé pour vérifier le statut de réclamation
-const useClaimedStatus = (address, reference) => {
-  const { data: hasBeenClaimed } = useReadContract({
-    address: contractAddress,
-    abi: ContractAbi.abi,
-    functionName: "beenClaimed",
-    args: [address, reference],
-    watch: true,
-  });
-  return hasBeenClaimed || false;
-};
-
-// Composant pour chaque ligne de voyage
-const VoyageRow = ({ voyage, handleRedeem }) => {
-  const { address } = useAccount();
-  const isClaimed = useClaimedStatus(address, voyage.reference);
-
-  return (
-    <tr>
-      <td>{voyage.from}</td>
-      <td>{voyage.to}</td>
-      <td>{voyage.departing}</td>
-      <td>{voyage.return}</td>
-      <td>{voyage.reference}</td>
-      <td>
-        {isClaimed ? (
-          <div className={bookingstyles.claimed}>Already Claimed</div>
-        ) : (
-          <button onClick={() => handleRedeem(voyage.miles, voyage.reference)}>
-            Claim {voyage.miles} MTK
-          </button>
-        )}
-      </td>
-    </tr>
-  );
-};
-
-// Composant principal
 const Booking = () => {
   const { address, isConnected } = useAccount();
   const { writeContract } = useWriteContract();
+  const [claimedStatuses, setClaimedStatuses] = useState({});
 
-  // Lire le solde de l'utilisateur
   const { data: balance, refetch: refetchBalance } = useReadContract({
     address: contractAddress,
     abi: ContractAbi.abi,
@@ -71,15 +37,35 @@ const Booking = () => {
     args: [address],
   });
 
-  // // Lecture de l'état hasBeenClaimed
-  // const { data: hasBeenClaimed, refetch: refetchClaimed } = useReadContract({
-  //   address: contractAddress,
-  //   abi: ContractAbi.abi,
-  //   functionName: 'beenClaimed',
-  //   args: [address, reference],
-  // });
+  const claimedStatusQueries = voyages.map((voyage) => ({
+    reference: voyage.reference,
+    ...useReadContract({
+      address: contractAddress,
+      abi: ContractAbi.abi,
+      functionName: "beenClaimed",
+      args: [address, voyage.reference],
+    }),
+  }));
 
-  // Fonction pour réclamer les tokens
+  useEffect(() => {
+    if (!address) return;
+    const statuses = {};
+    claimedStatusQueries.forEach((query) => {
+      statuses[query.reference] = query.data || false;
+    });
+    setClaimedStatuses(statuses);
+  }, [address, ...claimedStatusQueries.map((q) => q.data)]);
+
+  useWatchContractEvent({
+    address: contractAddress,
+    abi: ContractAbi.abi,
+    eventName: "Transfer",
+    onLogs: () => {
+      refetchBalance();
+      claimedStatusQueries.forEach((query) => query.refetch());
+    },
+  });
+
   const handleRedeem = (miles, reference) => {
     const amountInWei = parseEther(miles.toString());
     writeContract({
@@ -90,20 +76,21 @@ const Booking = () => {
     });
   };
 
-  // Rafraîchir le solde après un événement de transfert
-  useWatchContractEvent({
-    address: contractAddress,
-    abi: ContractAbi.abi,
-    eventName: "Transfer",
-    onLogs: () => {
-      refetchBalance();
-    },
-  });
+  function ClaimButton({ miles, reference }) {
+    const isClaimed = claimedStatuses[reference] || false;
+    return isClaimed ? (
+      <div className={bookingstyles.claimed}>Already Claimed</div>
+    ) : (
+      <Button onPress={() => handleRedeem(miles, reference)}>
+        Claim {miles} MTK
+      </Button>
+    );
+  }
 
   return (
     <div>
       <main className={bookingstyles.container}>
-        {isConnected && (
+        {isConnected ? (
           <>
             <div>
               <h2 className={bookingstyles.balance}>
@@ -129,15 +116,25 @@ const Booking = () => {
               </thead>
               <tbody>
                 {voyages.map((voyage, index) => (
-                  <VoyageRow
-                    key={index}
-                    voyage={voyage}
-                    handleRedeem={handleRedeem}
-                  />
+                  <tr key={index}>
+                    <td>{voyage.from}</td>
+                    <td>{voyage.to}</td>
+                    <td>{voyage.departing}</td>
+                    <td>{voyage.return}</td>
+                    <td>{voyage.reference}</td>
+                    <td>
+                      <ClaimButton
+                        miles={voyage.miles}
+                        reference={voyage.reference}
+                      />
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>
           </>
+        ) : (
+          <div>Please connect your wallet</div>
         )}
       </main>
     </div>
