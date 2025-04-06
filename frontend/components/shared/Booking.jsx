@@ -1,7 +1,7 @@
 "use client";
 
 // Frameworks
-import {Button, ButtonGroup} from "@heroui/button";
+import {Button} from "@heroui/button";
 import React, { useState, useEffect } from "react";
 import { parseEther } from "viem";
 import {
@@ -147,7 +147,7 @@ const Booking = () => {
     const error = errorReferences[reference];
 
     if (isClaimed) {
-      return <div className={bookingstyles.claimed}>Already Claimed</div>;
+      return <div className={bookingstyles.claimed}>Claimed</div>;
     }
 
     if (isLoading) {
@@ -220,9 +220,9 @@ const Booking = () => {
               <tbody>
                 <tr>
                   <td>Paris (CDG)</td>
-                  <td>New York (JFK)</td>
-                  <td>2024-03-15 08:30</td>
-                  <td>2024-03-15 11:00</td>
+                  <td>Los Angeles (LAX)</td>
+                  <td>2025-04-08 12:30</td>
+                  <td>2025-04-15 11:00</td>
                   <td>AF1234</td>
                   <td>
                     <UpgradeButton />
@@ -239,7 +239,7 @@ const Booking = () => {
                   <th>Departure Date</th>
                   <th>Arrival Date</th>
                   <th>Booking Reference</th>
-                  <th></th>
+                  <th>Mobility</th>
                 </tr>
               </thead>
               <tbody>
